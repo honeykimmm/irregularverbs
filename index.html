@@ -6,6 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Verb Galaxy">
+<link rel="manifest" href="manifest-beginner.json">
+<link rel="apple-touch-icon" href="icon-beginner-180.png">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#06091a">
 <title>Verb Galaxy — 초급</title>
 <style>
@@ -375,6 +378,57 @@
   }
   .mc-btn-again:hover { background: linear-gradient(135deg, #2277cc, #1255aa); }
 
+
+  /* ── TIME ATTACK MODE ── */
+  .mode-select { display:flex; gap:8px; margin-bottom:0; }
+  .mode-select-hidden { display:none; }
+
+  .ta-timer-ring {
+    position: relative;
+    width: 70px; height: 70px;
+    flex-shrink: 0;
+  }
+  .ta-timer-ring svg { transform: rotate(-90deg); }
+  .ta-ring-bg { fill:none; stroke:#1a2a3a; stroke-width:5; }
+  .ta-ring-fill { fill:none; stroke:#3399dd; stroke-width:5; stroke-linecap:round;
+    stroke-dasharray:188; stroke-dashoffset:0; transition:stroke-dashoffset 0.1s linear; }
+  .ta-ring-fill.warn { stroke:#ff6633; }
+  .ta-ring-num {
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; font-weight:900; color:#ffffff;
+    font-family:'Segoe UI',system-ui,sans-serif;
+  }
+  .ta-ring-num.warn { color:#ff6633; }
+
+  .ta-choices { display:flex; gap:10px; margin-bottom:10px; }
+  .ta-choice {
+    flex:1; padding:18px 8px;
+    background:#162035; border:2px solid #243560;
+    border-radius:11px; color:#ffffff;
+    font-size:18px; font-weight:800;
+    font-family:inherit; cursor:pointer;
+    text-align:center; transition:all 0.12s;
+  }
+  .ta-choice:hover:not(:disabled) { background:#1e2f50; border-color:#4477aa; transform:translateY(-2px); }
+  .ta-choice.correct { background:#082818!important; border-color:#22aa66!important; color:#44ffaa!important; }
+  .ta-choice.wrong   { background:#200808!important; border-color:#aa3333!important; color:#ffaaaa!important; }
+  .ta-choice.reveal  { background:#082818!important; border-color:#22aa66!important; color:#44ffaa!important; }
+
+  .ta-confirm-btn {
+    width:100%; padding:13px;
+    background:linear-gradient(135deg,#1a6abf,#0d4a9f);
+    color:#ffffff; border:none; border-radius:10px;
+    font-size:14px; font-weight:700;
+    cursor:pointer; font-family:inherit; margin-bottom:8px;
+    display:none;
+  }
+  .ta-confirm-btn:hover { background:linear-gradient(135deg,#2277cc,#1255aa); }
+  .ta-confirm-btn:disabled { opacity:0.4; cursor:default; }
+
+  .ta-header { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+  .ta-verb-area { flex:1; text-align:center; padding:14px 0 10px; border-bottom:1px solid #1e3050; }
+
   /* ── SCROLLBAR ── */
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: #0a1020; }
@@ -414,6 +468,13 @@
     <div class="section-label">🎮 문항 수 선택</div>
     <div class="qcount-row" id="qcount-row"></div>
 
+    <div style="margin-bottom:16px">
+      <div class="section-label">🎮 모드 선택</div>
+      <div class="mode-select">
+        <button class="qcount-btn active" id="mode-normal" onclick="selectGameMode('normal')" style="font-size:13px">🎯 기본 모드<br><span style="font-size:11px;font-weight:500;opacity:0.8">4지선다</span></button>
+        <button class="qcount-btn" id="mode-timeattack" onclick="selectGameMode('timeattack')" style="font-size:13px">⚡ 타임어택<br><span style="font-size:11px;font-weight:500;opacity:0.8">3초 2지선다</span></button>
+      </div>
+    </div>
     <button class="start-btn" id="start-btn">🚀 탐험 시작!</button>
   </section>
 
@@ -436,11 +497,34 @@
         <div class="q-num" id="q-num">Q1 / 20</div>
         <div class="q-streak" id="q-streak">🔥 연속 3개!</div>
       </div>
-      <div class="verb-area">
+      <div class="verb-area" id="verb-header">
         <div class="verb-word" id="verb-word">buy</div>
         <div class="verb-meaning" id="verb-meaning">사다</div>
       </div>
+      <div id="normal-area">
       <div class="choices" id="choices"></div>
+      <button class="ta-confirm-btn" id="normal-confirm-btn" style="margin-top:8px">확인</button>
+    </div>
+    <div id="ta-area" style="display:none">
+      <!-- 타이머 링 -->
+      <div style="display:flex;justify-content:center;margin-bottom:14px">
+        <div class="ta-timer-ring" id="ta-timer-ring">
+          <svg width="70" height="70" viewBox="0 0 70 70">
+            <circle class="ta-ring-bg" cx="35" cy="35" r="30"/>
+            <circle class="ta-ring-fill" id="ta-ring-fill" cx="35" cy="35" r="30"/>
+          </svg>
+          <div class="ta-ring-num" id="ta-ring-num">3</div>
+        </div>
+      </div>
+      <!-- 동사 표시 -->
+      <div class="verb-area" style="margin-bottom:16px">
+        <div class="verb-word" id="ta-verb-word"></div>
+        <div class="verb-meaning" id="ta-verb-mean"></div>
+      </div>
+      <!-- 2지선다 -->
+      <div class="ta-choices" id="ta-choices"></div>
+      <button class="ta-confirm-btn" id="ta-confirm-btn">확인</button>
+    </div>
       <div class="feedback-row" id="feedback"></div>
       <button class="next-btn" id="next-btn">다음 →</button>
     </div>
@@ -561,11 +645,19 @@ const NG_MSG = ['오답이에요 😅', '에너지 손실! ⚡', '아쉬워요..
 
 /* ── STATE ── */
 let TOTAL = 20;
+let gameMode = 'normal'; // 'normal' | 'timeattack'
 let queue, idx, hp, stars, streak, answered, wrongList, upgradePending;
+let taTimer, taSelected;
 
 /* ── UTILS ── */
 const $ = id => document.getElementById(id);
 const rnd = arr => arr[0 | Math.random() * arr.length];
+function selectGameMode(m) {
+  gameMode = m;
+  document.getElementById('mode-normal').classList.toggle('active', m==='normal');
+  document.getElementById('mode-timeattack').classList.toggle('active', m==='timeattack');
+}
+
 function shuffle(a) {
   const r = [...a];
   for (let i = r.length - 1; i > 0; i--) {
@@ -706,15 +798,44 @@ function loadQ() {
   streak_el.textContent = '🔥 ' + streak + '연속!';
   streak_el.classList.toggle('show', streak >= 3);
 
-  const opts = makeChoices(v);
-  const grid = $('choices'); grid.innerHTML = '';
-  opts.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'choice-btn';
-    btn.textContent = opt;
-    btn.addEventListener('click', () => pick(opt, v, btn, grid));
-    grid.appendChild(btn);
-  });
+  if (gameMode === 'timeattack') {
+    $('normal-area').style.display = 'none';
+    $('ta-area').style.display = 'block';
+    // qcard 상단 헤더도 숨기기
+    $('verb-header').style.display = 'none';
+    loadTA(v);
+  } else {
+    $('verb-header').style.display = '';
+    $('normal-area').style.display = 'block';
+    $('ta-area').style.display = 'none';
+    const opts = makeChoices(v);
+    const grid = $('choices'); grid.innerHTML = '';
+    let normalSelected = null;
+    const confirmBtn = $('normal-confirm-btn');
+    confirmBtn.style.display = 'none';
+    confirmBtn.disabled = false;
+    confirmBtn.onclick = () => {
+      if (!normalSelected || answered) return;
+      confirmBtn.disabled = true;
+      pick(normalSelected.opt, v, normalSelected.btn, grid);
+    };
+    opts.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => {
+        if (answered) return;
+        // 선택 표시
+        Array.from(grid.children).forEach(b => {
+          b.setAttribute('style','display:block;width:100%;padding:14px 8px;background:#162035;border:2px solid #243560;border-radius:11px;color:#ffffff;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;');
+        });
+        btn.setAttribute('style','display:block;width:100%;padding:14px 8px;background:#0d1a2e;border:2px solid #3399dd;border-radius:11px;color:#ffffff;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;text-align:center;');
+        normalSelected = {opt, btn};
+        confirmBtn.style.display = 'block';
+      });
+      grid.appendChild(btn);
+    });
+  }
 }
 
 /* ── PICK ── */
@@ -747,6 +868,114 @@ function pick(chosen, verb, btn, grid) {
       nb.textContent = '결과 보기 →';
       nb.onclick = showMissionComplete;
       nb.style.display = 'block';
+      return;
+    }
+    $('next-btn').style.display = 'block';
+  }
+}
+
+/* ── TIME ATTACK ── */
+function loadTA(v) {
+  clearInterval(taTimer);
+  taSelected = null;
+  answered = false;
+  $('ta-verb-word').textContent = v.b;
+  $('ta-verb-mean').textContent = v.m;
+  $('feedback').textContent = '';
+  $('next-btn').style.display = 'none';
+
+  // 2지선다: 정답 + 오답 1개
+  const wrongs = makeChoices(v).filter(c => c !== v.p);
+  const opts = shuffle([v.p, wrongs[0]]);
+
+  const grid = $('ta-choices'); grid.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'ta-choice';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      if (answered) return;
+      // 선택 표시
+      Array.from(grid.children).forEach(b => b.style.borderColor = '#243560');
+      btn.style.borderColor = '#3399dd';
+      btn.style.background = '#0d1a2e';
+      taSelected = opt;
+      $('ta-confirm-btn').style.display = 'block';
+    });
+    grid.appendChild(btn);
+  });
+
+  $('ta-confirm-btn').style.display = 'none';
+  $('ta-confirm-btn').disabled = false;
+
+  // 타이머
+  let t = 3;
+  const ring = $('ta-ring-fill');
+  const num = $('ta-ring-num');
+  const circumference = 188;
+  ring.setAttribute('class', 'ta-ring-fill');
+  num.className = 'ta-ring-num';
+  ring.style.strokeDashoffset = '0';
+  num.textContent = t;
+
+  taTimer = setInterval(() => {
+    t -= 0.05;
+    const offset = circumference * (1 - Math.max(t,0) / 3);
+    ring.style.strokeDashoffset = offset;
+    num.textContent = Math.ceil(Math.max(t,0));
+    if (t <= 1) { ring.setAttribute('class', 'ta-ring-fill warn'); num.className = 'ta-ring-num warn'; }
+    if (t <= 0) {
+      clearInterval(taTimer);
+      if (!answered) taTimeUp(v, grid);
+    }
+  }, 50);
+}
+
+function taTimeUp(v, grid) {
+  answered = true;
+  clearInterval(taTimer);
+  hp = Math.max(0, hp - 1);
+  streak = 0; wrongList.push(v);
+  Array.from(grid.children).forEach(b => { if (b.textContent === v.p) b.className = 'ta-choice reveal'; });
+  $('feedback').textContent = '시간 초과! ⏱';
+  $('feedback').style.color = '#ff8888';
+  $('ta-confirm-btn').style.display = 'none';
+  renderHUD();
+  if (hp === 0) {
+    const nb = $('next-btn');
+    nb.textContent = '결과 보기 →'; nb.onclick = showMissionComplete; nb.style.display = 'block';
+    return;
+  }
+  $('next-btn').style.display = 'block';
+}
+
+function taConfirm() {
+  if (answered || !taSelected) return;
+  clearInterval(taTimer);
+  answered = true;
+  $('ta-confirm-btn').disabled = true;
+  const v = queue[idx];
+  const grid = $('ta-choices');
+  const upgPer = Math.max(1, Math.floor(TOTAL / 5));
+
+  Array.from(grid.children).forEach(b => {
+    if (b.textContent === v.p) b.className = 'ta-choice reveal';
+    else if (b.textContent === taSelected && taSelected !== v.p) b.className = 'ta-choice wrong';
+  });
+
+  if (taSelected === v.p) {
+    stars++; streak++;
+    $('feedback').textContent = rnd(OK_MSG); $('feedback').style.color = '#44ddaa';
+    renderHUD(); renderShips();
+    if (stars > 0 && stars % upgPer === 0 && Math.floor(stars / upgPer) <= 4) upgradePending = true;
+    setTimeout(() => nextQ(), 600);
+  } else {
+    hp = Math.max(0, hp - 1); streak = 0; wrongList.push(v);
+    $('feedback').textContent = rnd(NG_MSG); $('feedback').style.color = '#ff8888';
+    renderHUD();
+    if (hp === 0) {
+      const nb = $('next-btn');
+      nb.textContent = '결과 보기 →'; nb.onclick = showMissionComplete; nb.style.display = 'block';
       return;
     }
     $('next-btn').style.display = 'block';
@@ -815,6 +1044,7 @@ function showMissionComplete() {
 
 /* ── EVENT LISTENERS ── */
 $('start-btn').addEventListener('click', startGame);
+document.getElementById('ta-confirm-btn').addEventListener('click', taConfirm);
 $('next-btn').addEventListener('click', nextQ);
 $('up-btn').addEventListener('click', () => { $('upgrade-overlay').classList.remove('show'); loadQ(); });
 $('mc-home').addEventListener('click', () => {
@@ -838,6 +1068,11 @@ document.addEventListener('keydown', e => {
   const nb = $('next-btn');
   if (nb.style.display !== 'none') { nb.click(); return; }
 });
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').then(()=>console.log('SW registered'));
+}
 </script>
 </body>
 </html>
