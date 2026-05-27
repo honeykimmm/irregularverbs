@@ -1,12 +1,10 @@
-const CACHE = 'verb-master-v1';
+const CACHE = 'verb-master-v2';
 const FILES = [
   './index.html',
-  './intermediate.html',
-  './advanced.html',
-  './icon-beginner-192.png',
-  './icon-beginner-512.png',
-  './icon-beginner-180.png',
-  './manifest-beginner.json'
+  './icon-192.png',
+  './icon-512.png',
+  './icon-180.png',
+  './manifest.json'
 ];
 
 self.addEventListener('install', e => {
