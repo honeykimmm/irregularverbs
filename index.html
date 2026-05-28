@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,interactive-widget=resizes-content">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Verb Master">
@@ -13,7 +13,7 @@
 <style>
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
+html{height:100%}body{min-height:100%;height:-webkit-fill-available}
 body{background:#06091a;font-family:'Segoe UI',system-ui,sans-serif;color:#fff;overflow-x:hidden}
 #starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 #app{position:relative;z-index:1;min-height:100vh;max-width:500px;margin:0 auto;padding:18px 18px 48px;display:flex;flex-direction:column}
@@ -300,6 +300,46 @@ body{background:#06091a;font-family:'Segoe UI',system-ui,sans-serif;color:#fff;o
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#1e2e2e;border-radius:2px}
 
+
+/* ── 가로 모드 / 태블릿 최적화 ── */
+@media (orientation: landscape) {
+  #app { max-width: 600px; padding: 10px 20px 20px; }
+  .planet-bar { height: 80px; margin-bottom: 6px; }
+  .verb-word { font-size: 32px; }
+  .verb-area { padding: 8px 0 6px; margin-bottom: 8px; }
+  .type-blocks { gap: 10px; margin-bottom: 10px; }
+  .type-input { font-size: 22px; padding: 8px 0 6px; }
+  .choices { gap: 6px; margin-bottom: 6px; }
+  .choice-btn { padding: 10px 8px; font-size: 14px; }
+  .ta-choices { gap: 8px; }
+  .ta-choice { padding: 12px 8px; font-size: 14px; }
+  .hud { padding: 7px 10px; margin-bottom: 6px; }
+  .qcard { padding: 12px; }
+  .q-meta { margin-bottom: 6px; }
+  .feedback { margin-bottom: 4px; min-height: 16px; }
+  .hint-bar { margin-bottom: 6px; }
+  .big-timer { padding: 8px 0; margin-bottom: 10px; }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .planet-bar { display: none; }
+  .verb-word { font-size: 28px; }
+  .verb-area { padding: 6px 0; margin-bottom: 6px; }
+  .type-blocks { gap: 8px; margin-bottom: 8px; }
+  .type-input { font-size: 20px; padding: 6px 0; }
+  .hud { margin-bottom: 4px; }
+  .qcard { padding: 10px; }
+}
+
+/* 태블릿 (가로 넓은 화면) */
+@media (min-width: 768px) {
+  #app { max-width: 560px; padding: 20px 24px 48px; }
+  .lcard { padding: 22px 24px; }
+  .lcard-name { font-size: 22px; }
+  .lcard-desc { font-size: 15px; }
+  .verb-word { font-size: 52px; }
+  .choice-btn { font-size: 16px; padding: 18px 10px; }
+}
 </style>
 </head>
 <body>
@@ -926,7 +966,14 @@ function loadType(v){
   if(lv===2){$('hint-bar').style.display='flex';$('hint-count').textContent='💡 힌트 '+hintsLeft+'개 남음';$('hint-past-btn').disabled=hintsLeft<=0;$('hint-pp-btn').disabled=hintsLeft<=0;$('hint-past-btn').textContent='💡 과거형 힌트';$('hint-pp-btn').textContent='💡 과거분사 힌트';}
   else $('hint-bar').style.display='none';
   if(lv===3&&TIMER_SEC>0)startBigTimer(v);else $('big-timer').style.display='none';
-  setTimeout(()=>ip.focus(),80);
+  setTimeout(()=>{
+    ip.focus();
+    // 키보드 올라온 후 입력창 스크롤 확보
+    setTimeout(()=>{
+      const el=document.getElementById('area-type');
+      if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },300);
+  },80);
   ip.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();ipp.focus();}};
   ipp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();checkType();}};
 }
