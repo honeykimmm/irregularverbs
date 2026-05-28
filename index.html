@@ -52,7 +52,7 @@ body{background:#06091a;font-family:'Segoe UI',system-ui,sans-serif;color:#fff;o
 .vn-bg{position:absolute;inset:0;z-index:0;transition:background .6s ease}
 #vn-star-canvas{position:absolute;inset:0;z-index:1;pointer-events:none}
 /* 캐릭터 — 상단 고정, flex로 세로 나눔 */
-.vn-top{position:relative;flex:1;display:flex;align-items:center;justify-content:center;z-index:2;overflow:hidden;min-height:0}
+.vn-top{position:relative;flex:1;display:flex;align-items:center;justify-content:center;z-index:2;overflow:visible;min-height:0}
 .vn-char{height:280px;width:auto;max-width:320px;object-fit:contain;transition:all .5s cubic-bezier(.34,1.2,.64,1);filter:drop-shadow(0 8px 32px rgba(0,0,0,.6));position:relative;z-index:3}
 /* 행성 오버레이 */
 .vn-planets-row{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;align-items:flex-end;gap:8px;padding-bottom:8px;opacity:0;transition:opacity .5s;z-index:4}
@@ -136,7 +136,7 @@ body{background:#06091a;font-family:'Segoe UI',system-ui,sans-serif;color:#fff;o
 .hud-score.lv3{color:#88dd99;background:#0a1a0a;border-color:#2a6a3a}
 
 /* PLANET BAR */
-.planet-bar{display:flex;align-items:flex-end;justify-content:center;height:110px;margin-bottom:10px;flex-shrink:0}
+.planet-bar{display:flex;align-items:flex-end;justify-content:center;height:130px;margin-bottom:10px;flex-shrink:0}
 .planet-slot{display:flex;flex-direction:column;align-items:center;flex:1}
 .planet-name{font-size:9px;color:#445566;margin-top:3px;font-weight:600}
 .planet-slot.cur .planet-name{color:#ffcc44}
@@ -190,16 +190,16 @@ body{background:#06091a;font-family:'Segoe UI',system-ui,sans-serif;color:#fff;o
 .type-blocks{display:flex;flex-direction:column;gap:16px;margin-bottom:16px}
 .type-block{display:flex;flex-direction:column;gap:5px}
 .type-lbl{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
-.type-lbl.lv2{color:#7755aa}
+.type-lbl.lv2{color:#aa77dd;font-size:11px}
 .type-lbl.lv3{color:#4a9a5a}
-.type-input{width:100%;padding:11px 0 9px;background:transparent;border:none;border-bottom:2px solid;color:#f0f8ff;font-size:24px;font-weight:700;font-family:inherit;outline:none;letter-spacing:1px;-webkit-text-fill-color:#f0f8ff;transition:border-color .15s}
-.type-input.lv2{border-color:#2a1545}
-.type-input.lv2:focus{border-color:#9955dd}
+.type-input{width:100%;padding:11px 0 9px;background:transparent;border:none;border-bottom:2px solid;color:#ffffff;font-size:26px;font-weight:800;font-family:inherit;outline:none;letter-spacing:1px;-webkit-text-fill-color:#ffffff;transition:border-color .15s}
+.type-input.lv2{border-color:#6633aa}
+.type-input.lv2:focus{border-color:#cc88ff}
 .type-input.lv3{border-color:#1a3828}
 .type-input.lv3:focus{border-color:#4a9a5a}
 .type-input::placeholder{font-weight:400;font-size:15px;font-style:italic}
-.type-input.lv2::placeholder{color:#2a1545;-webkit-text-fill-color:#2a1545}
-.type-input.lv3::placeholder{color:#1a3828;-webkit-text-fill-color:#1a3828}
+.type-input.lv2::placeholder{color:#7755aa;-webkit-text-fill-color:#7755aa}
+.type-input.lv3::placeholder{color:#4a9a5a;-webkit-text-fill-color:#4a9a5a}
 
 /* HINT */
 .hint-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
@@ -242,7 +242,7 @@ body{background:#06091a;font-family:'Segoe UI',system-ui,sans-serif;color:#fff;o
 @keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 .up-label{font-size:10px;font-weight:700;letter-spacing:3px;margin-bottom:8px}
 .up-label.lv1{color:#3399dd}.up-label.lv2{color:#9955dd}.up-label.lv3{color:#4a9a5a}
-.up-planet-img{width:80px;height:80px;object-fit:contain;display:block;margin:6px auto}
+.up-planet-img{width:150px;height:150px;object-fit:contain;display:block;margin:10px auto}
 .up-name{font-size:20px;font-weight:900;color:#f0f8ff;margin-bottom:6px}
 .up-desc{font-size:13px;color:#7799bb;line-height:1.6}
 .particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
@@ -650,13 +650,13 @@ function showVnSlide(n){
   const s=VN[n];if(!s)return;
   document.getElementById('vn-bg').style.background=s.bg;
   const charEl=document.getElementById('vn-char');
-  charEl.style.cssText='height:280px;width:auto;max-width:320px;object-fit:contain;opacity:0;transform:translateY(-20px);transition:none;filter:drop-shadow(0 8px 32px rgba(0,0,0,.6))';
+  charEl.style.cssText='height:340px;width:auto;max-width:340px;object-fit:contain;opacity:0;transform:translateY(-20px);transition:none;filter:drop-shadow(0 8px 32px rgba(0,0,0,.6))';
   if(CHARS[s.char])charEl.src=CHARS[s.char];
   setTimeout(()=>{(function(){
     var faceChars=['c_surprised','c_wink','c_blank'];
     var isFace=faceChars.indexOf(s.char)>=0;
-    var h=isFace?'260px':'280px';
-    charEl.style.cssText='height:'+h+';width:auto;max-width:320px;object-fit:contain;opacity:1;transform:translateY(0);transition:all .45s cubic-bezier(.34,1.2,.64,1);filter:drop-shadow(0 8px 32px rgba(0,0,0,.6))';
+    var h=isFace?'420px':'290px';
+    charEl.style.cssText='height:'+h+';width:auto;max-width:340px;object-fit:contain;opacity:1;transform:translateY(0);transition:all .45s cubic-bezier(.34,1.2,.64,1);filter:drop-shadow(0 8px 32px rgba(0,0,0,.6))';
   })()},60);
 
   const planetsRow=document.getElementById('vn-planets-row');
@@ -797,7 +797,7 @@ function renderPlanets(){
   const stage=Math.min(Math.floor(stars/upgPer),4);
   PLANETS.forEach((p,i)=>{
     const slot=document.createElement('div');slot.className='planet-slot'+(i===stage?' cur':'');
-    const scale=i===stage?2.2:0.6+i*0.1;
+    const scale=i===stage?2.8:0.65+i*0.12;
     const opacity=i<=stage?1:0.15;
     const pcolor=PLANET_COLORS[p.e]||'#fff';
     const glow=i===stage?`drop-shadow(0 0 8px ${pcolor}) drop-shadow(0 0 18px ${pcolor}88)`:'none';
